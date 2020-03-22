@@ -461,6 +461,8 @@
 
         
         <xsl:variable name="stemVal" as="xs:string*">
+            <!-- HIMME customization to strip diacrtics from index as well as some special characters ʿʾ -->
+            <!-- <xsl:value-of select="replace(lower-case(replace(normalize-unicode($word, 'NFD'), '[\p{M}]', '')),'ʿ|ʾ','')"/> -->
             <xsl:choose>
                 <!--If it has a digit, then it makes no sense to stem it-->
                 <xsl:when test="$containsDigit">
@@ -468,24 +470,23 @@
                 </xsl:when>
                 
                 <!--If it's foreign, just proceed-->
+                <!--
                 <xsl:when test="$isForeign">
                     <xsl:value-of select="$wordToStem"/>
                 </xsl:when>
-                
+                -->
                 <!--If it contains a capital, then we fork-->
+                <!--
                 <xsl:when test="$containsCapital">
-
-                    <!--Produce the stem of the lowercase version-->
                     <xsl:value-of select="pt:stem($lcWord)"/>
-                    
-                    <!--And if it's not in the dictionary, then return the cleaned word-->
                     <xsl:if test="not($inDictionary)">
                         <xsl:value-of select="concat(substring($wordToStem,1,1),substring($lcWord,2))"/>
                     </xsl:if>
-                    
                 </xsl:when>
+                -->
                 <xsl:otherwise>
-                    <xsl:value-of select="pt:stem($lcWord)"/>
+<!--                    <xsl:value-of select="pt:stem($lcWord)"/>-->
+                    <xsl:value-of select="replace(lower-case(replace(normalize-unicode($word, 'NFD'), '[\p{M}]', '')),'ʿ|ʾ','')"/>
                 </xsl:otherwise>
                 <!--Don't return it if it's not in the dictionary and it's hyphenated;
                     we'll process each individual token instead-->

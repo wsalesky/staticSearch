@@ -569,6 +569,8 @@ class StaticSearch{
       //Clear anything in the existing array.
       this.terms = [];
       let strSearch = this.queryBox.value;
+      //HIMME customization: Keep original string
+      //origSearch = strSearch;
       //Start by normalizing whitespace.
       strSearch = strSearch.replace(/((^\s+)|\s+$)/g, '');
       strSearch = strSearch.replace(/\s+/g, ' ');
@@ -578,8 +580,18 @@ class StaticSearch{
       strSearch = strSearch.replace(/[‘’‛]/g, "'");
 
       //Strip out all other punctuation that isn't between numbers
-      strSearch = strSearch.replace(/(^|[^\d])[\.',!;:@#$%\^&*]+([^\d]|$)/g, '$1$2');
-
+      //strSearch = strSearch.replace(/(^|[^\d])[\.',!;:@#$%\^&*]+([^\d]|$)/g, '$1$2');
+      //HIMME customizations: retain * and ? for wild card searches  
+      strSearch = strSearch.replace(/(^|[^\d])[\.',!;:@#$%\^&]+([^\d]|$)/g, '$1$2');
+      
+      //HIMME customizations: match search string to XSLT tokenize.
+      //Step 1 remove ʿ|ʾ
+      strSearch = strSearch.replace(/(ʿ|ʾ)/g, '');
+      //Step 2. lowercase
+      strSearch = strSearch.toLowerCase();
+      //Step 3 remove diacritics
+      strSearch = strSearch.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      
       //If we're not supporting phrasal searches, get rid of double quotes.
       if (!this.allowPhrasal){
         strSearch = strSearch.replace(/"/g, '');
@@ -609,8 +621,9 @@ class StaticSearch{
 
       //Put that fixed string back in the box to make
       //clear to the user what's been understood.
+      //HIMME customization origSearch;
       this.queryBox.value = strSearch;
-
+      
       //Now iterate through the string, paying attention
       //to whether you're inside a quote or not.
       let inPhrase = false;

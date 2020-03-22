@@ -706,11 +706,12 @@
     <xsl:template name="createWordListJson">
         <xsl:message>Creating word list JSON...</xsl:message>
         <xsl:variable name="lowerWords" select="uri-collection(concat($outDir,'/lower?select=*.json'))"/>
-        <xsl:variable name="upperWords" select="uri-collection(concat($outDir,'/upper?select=*.json'))"/>
+        <!-- HIMME customization, only output lowercase words (few index files to create, maintain and search.) -->
+        <!--<xsl:variable name="upperWords" select="uri-collection(concat($outDir,'/upper?select=*.json'))"/>-->
         <xsl:variable name="map" as="element(map:map)">
             <map:map>
                <map:array key="tokens">
-                   <xsl:for-each select="($lowerWords,$upperWords)">
+                   <xsl:for-each select="($lowerWords)">
                        <xsl:sort select="lower-case(.)"/>
                        <xsl:sort select="string-length(.)"/>
                        <map:string><xsl:value-of select="tokenize(.,'/')[last()] => substring-before('.json') => normalize-space()"/></map:string>
